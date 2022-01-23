@@ -20,8 +20,6 @@ def delete_file(filename, conn):
     if os.path.exists(filename):
         os.remove(filename)
         conn.sendall(b'file deleted')
-    # if pathlib.Path.is_file(filename):
-    #     pathlib.Path.unlink(filename)
     else:
         conn.sendall(b"No such file exists")
 
@@ -30,21 +28,17 @@ def show_contents_of(filename, conn):
     if os.path.exists(filename):
         with open(filename, 'r') as f:
             conn.sendall(f.read().encode("utf-8"))
-    # if pathlib.Path.is_file(filename):
-    #     with open(filename, 'r') as f:
-    #         print(f.read())
     else:
         conn.sendall(b"No such file exists")
 
 
-def edit_file(filename, conn):
+def edit_file(filename, contents, conn):
     if os.path.exists(filename):
         with open(filename, 'w') as f:
-            data = conn.recv(1024)
-            print(data.decode('utf-8'))
-            if data.decode('utf-8') == '#':
-                return
-            f.write(data.decode('utf-8'))
+            f.write("\n".join(contents))
+        conn.sendall(b'file edited')
+    else:
+        conn.sendall(b'No such file exists')
 
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -72,5 +66,4 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 case 'cat':
                     show_contents_of(req[1], conn)
                 case 'edi':
-                    edit_file(req[1], conn)
-                    conn.sendall(b'file changed')
+                    edit_file(req[1], req[2:], conn)
