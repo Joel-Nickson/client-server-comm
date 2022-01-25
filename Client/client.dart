@@ -1,10 +1,4 @@
-// import 'dart:io';
-
-// void main() {
-//   Socket.connect('127.0.0.1', 4041).then((socket) {
-//     socket.write('Hello, World!');
-//   });
-// }
+// same program as the one written in python
 
 import 'dart:io';
 import 'dart:convert';
@@ -56,7 +50,6 @@ main() async {
       }
       message = edit.join('\n');
     }
-
     socket.add(utf8.encode(message));
     await Future.delayed(Duration(milliseconds: 500));
   } while (message != '#');
