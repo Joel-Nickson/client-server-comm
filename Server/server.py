@@ -44,31 +44,34 @@ def edit_file(filename, contents, conn):
         conn.sendall(b'No such file exists')
 
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.bind((HOST, PORT))
-    s.listen()
-    conn, addr = s.accept()
-    with conn:
-        print('Connected by', addr)
-        while True:
-            data = conn.recv(1024)
-            print(data.decode('utf-8'))
-            if not data:
-                break
+try:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind((HOST, PORT))
+        s.listen()
+        conn, addr = s.accept()
+        with conn:
+            print('Connected by', addr)
+            while True:
+                data = conn.recv(1024)
+                print(data.decode('utf-8'))
+                if not data:
+                    break
 
-            req = data.decode('utf-8').split('\n')
-            command = req[0].split()
+                req = data.decode('utf-8').split('\n')
+                command = req[0].split()
 
-            if len(command) < 2:
-                conn.sendall(b"Need more info")
+                if len(command) < 2:
+                    conn.sendall(b"Need more info")
 
-            match command[0][:3]:
-                case 'cre':
-                    create_file(command[1], conn)
-                case 'del':
-                    delete_file(command[1], conn)
-                case 'cat':
-                    show_contents_of(command[1], conn)
-                case 'edi':
-                    print(command, req)
-                    edit_file(command[1], req[1:], conn)
+                match command[0][:3]:
+                    case 'cre':
+                        create_file(command[1], conn)
+                    case 'del':
+                        delete_file(command[1], conn)
+                    case 'cat':
+                        show_contents_of(command[1], conn)
+                    case 'edi':
+                        print(command, req)
+                        edit_file(command[1], req[1:], conn)
+except Exception as e:
+    print('\tAn exception occurred\n\n'+e)
