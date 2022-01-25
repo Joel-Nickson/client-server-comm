@@ -29,11 +29,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         elif inp.startswith('#'):
             break
         elif inp.startswith("edi"):
-            edit = inp.split()
+            edit.append(inp)
             while inp != "#":
                 inp = input('>')
                 edit.append(inp)
             inp = '\n'.join(edit[:-1])
+            print(inp)
 
         s.send(inp.encode('utf-8'))
         data = s.recv(1024)

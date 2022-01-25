@@ -27,7 +27,10 @@ def delete_file(filename, conn):
 def show_contents_of(filename, conn):
     if os.path.exists(filename):
         with open(filename, 'r') as f:
-            conn.sendall(f.read().encode("utf-8"))
+            res = f.read()
+            if res == '':
+                conn.sendall(b' ')
+            conn.sendall(res.encode("utf-8"))
     else:
         conn.sendall(b"No such file exists")
 
@@ -53,17 +56,19 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             if not data:
                 break
 
-            req = data.decode('utf-8').split()
+            req = data.decode('utf-8').split('\n')
+            command = req[0].split()
 
-            if len(req) < 2:
+            if len(command) < 2:
                 conn.sendall(b"Need more info")
 
-            match req[0][:3]:
+            match command[0][:3]:
                 case 'cre':
-                    create_file(req[1], conn)
+                    create_file(command[1], conn)
                 case 'del':
-                    delete_file(req[1], conn)
+                    delete_file(command[1], conn)
                 case 'cat':
-                    show_contents_of(req[1], conn)
+                    show_contents_of(command[1], conn)
                 case 'edi':
-                    edit_file(req[1], req[2:], conn)
+                    print(command, req)
+                    edit_file(command[1], req[1:], conn)
