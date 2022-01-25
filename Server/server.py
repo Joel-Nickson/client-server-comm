@@ -35,7 +35,7 @@ def show_contents_of(filename, conn):
 def edit_file(filename, contents, conn):
     if os.path.exists(filename):
         with open(filename, 'w') as f:
-            f.write("\n".join(contents))
+            f.write(" ".join(contents))
         conn.sendall(b'file edited')
     else:
         conn.sendall(b'No such file exists')
@@ -56,7 +56,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             req = data.decode('utf-8').split()
 
             if len(req) < 2:
-                conn.sendall(b"Need more info")
+                conn.sendall(b"Command not recognized")
 
             match req[0][:3]:
                 case 'cre':
