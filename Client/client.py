@@ -1,7 +1,7 @@
 import socket
 
 HOST = '127.0.0.1'  # The server's hostname or IP address
-PORT = 8000        # The port used by the server
+PORT = 3000        # The port used by the server
 
 
 def help_function():
@@ -33,7 +33,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             while inp != "#":
                 inp = input('>')
                 edit.append(inp)
-            inp = '\n'.join(edit[:-1])
+            inp = .join(edit[:-1])
 
         s.send(inp.encode('utf-8'))
         data = s.recv(1024)

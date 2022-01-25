@@ -3,7 +3,7 @@ import os
 import pathlib
 
 HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
-PORT = 8000         # Port to listen on (non-privileged ports are > 1023)
+PORT = 3000         # Port to listen on (non-privileged ports are > 1023)
 
 
 def create_file(filename, conn):
@@ -27,7 +27,10 @@ def delete_file(filename, conn):
 def show_contents_of(filename, conn):
     if os.path.exists(filename):
         with open(filename, 'r') as f:
-            conn.sendall(f.read().encode("utf-8"))
+            res = f.read()
+            if res == '':
+                conn.sendall(b' ')
+            conn.sendall(res.encode("utf-8"))
     else:
         conn.sendall(b"No such file exists")
 
